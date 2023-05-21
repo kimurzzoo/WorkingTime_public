@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
+    <link href="../../static/css/header.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="d-lg-block sidebar bg-white collapse show">
+            <div class="position-sticky">
+                <div class="list-group list-group-flush mx-3 mt-4">
+                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>MyPage</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fas fa-chart-pie fa-fw me-3"></i><span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <!-- Sidebar -->
+    
+        <!-- Navbar -->
+        <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <img src="../../static/img/hamburger.png"/>
+                </button>
+    
+                <!-- Brand -->
+                <a class="navbar-brand" href="#">Working Time
+                </a>
+            </div>
+            <!-- Container wrapper -->
+            <ul class="navbar-nav ms-auto d-flex flex-row">
+                <p>달쌈</p>
+            </ul>
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <main style="margin-top: 58px">
+        <div class="container pt-4">
+            
+        </div>
+    </main>
+    <section class="p-4 d-flex justify-content-center py-4 bgeee w-100">
+        <div class="card text-center" style="width: 300px;">
+            <div class="card-header h5 text-white bg-primary">Email Verification</div>
+            <div class="card-body px-5">
+                <p class="card-text py-2">
+                    Enter your redeem code we send within 5 minutes.
+                </p>
+                <div class="form-outline">
+                    <input type="text" id="typeRedeemcode" class="form-control my-3">
+                    <label class="form-label" for="typeRedeemcode" style="margin-left: 0px;">Redeem code</label>
+                    <div class="form-notch">
+                        <div class="form-notch-leading" style="width: 9px;"></div>
+                        <div class="form-notch-middle" style="width: 88px;"></div>
+                        <div class="form-notch-trailing"></div>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary w-100" style="margin-bottom: 10px;">SEND REDEEM CODE</a>
+                <a href="#" class="btn btn-primary w-100">SUBMIT</a>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

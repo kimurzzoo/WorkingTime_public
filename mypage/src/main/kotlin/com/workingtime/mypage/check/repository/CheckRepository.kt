@@ -1,0 +1,20 @@
+package com.workingtime.mypage.check.repository
+
+import com.workingtime.mypage.check.entity.Check
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
+
+@Repository
+interface CheckRepository : JpaRepository<Check, Long>, PagingAndSortingRepository<Check, Long> {
+
+    /*@Query("select \"check\".\"id\" as \"id\", \"check\".\"created_date\" as \"created_date\",\"check\".\"updated_at\" as \"updated_at\",\"check\".\"end_time\" as \"end_time\",\"check\".\"start_time\" as \"start_time\", \"check\".\"company_id\" as \"company_id\", \"check\".\"user_id\" as \"user_id\" from \"check\" inner join \"company\" on (\"check\".\"company_id\" = \"company\".\"id\") where (\"check\".\"user_id\" = :userId) and (\"check\".\"start_time\" between :startDate and :endDate) and (\"check\".\"end_time\" between :startDate and :endDate) and (\"company\".\"name\" LIKE '%'|| :companyName ||'%') and (datediff(HOUR, \"check\".\"start_time\", \"check\".\"end_time\") >= :minWorkingTime) and (datediff(HOUR, \"check\".\"start_time\", \"check\".\"end_time\") < :maxWorkingTime) order by \"check\".\"id\" desc", countQuery = "select \"check\".\"id\" as \"id\", \"check\".\"created_date\" as \"created_date\",\"check\".\"updated_at\",\"check\".\"end_time\",\"check\".\"start_time\", \"check\".\"company_id\", \"check\".\"user_id\" from \"check\" inner join \"company\" on (\"check\".\"company_id\" = \"company\".\"id\") where (\"check\".\"user_id\" = :userId) and (\"check\".\"start_time\" between :startDate and :endDate) and (\"check\".\"end_time\" between :startDate and :endDate) and (\"company\".\"name\" LIKE '%'|| :companyName ||'%') and (datediff(HOUR, \"check\".\"start_time\", \"check\".\"end_time\") >= :minWorkingTime) and (datediff(HOUR, \"check\".\"start_time\", \"check\".\"end_time\") < :maxWorkingTime) order by \"check\".\"id\" desc" ,nativeQuery = true)
+    fun findChecksByFilters(userId : Long, startDate : LocalDateTime, endDate : LocalDateTime, companyName : String, minWorkingTime : Int, maxWorkingTime : Int, pageable : Pageable) : Page<Check>*/ // h2
+
+    @Query("select `check`.id as id, `check`.created_date as created_date,`check`.updated_at as updated_at,`check`.end_time as end_time,`check`.start_time as start_time, `check`.company_id as company_id, `check`.user_id as user_id from `check` inner join company on (`check`.company_id = company.id) where (`check`.user_id = :userId) and (`check`.start_time between :startDate and :endDate) and (`check`.end_time between :startDate and :endDate) and (company.name LIKE concat(\'%\', :companyName, \'%\') and (TIMESTAMPDIFF(HOUR, `check`.start_time, `check`.end_time) >= :minWorkingTime) and (TIMESTAMPDIFF(HOUR, `check`.start_time, `check`.end_time) < :maxWorkingTime) order by `check`.id desc", countQuery = "select `check`.id as id, `check`.created_date as created_date,`check`.updated_at as updated_at,`check`.end_time as end_time,`check`.start_time as start_time, `check`.company_id as company_id, `check`.user_id as user_id from `check` inner join company on (`check`.company_id = company.id) where (`check`.user_id = :userId) and (`check`.start_time between :startDate and :endDate) and (`check`.end_time between :startDate and :endDate) and (company.name LIKE concat(\'%\', :companyName, \'%\') and (TIMESTAMPDIFF(HOUR, `check`.start_time, `check`.end_time) >= :minWorkingTime) and (TIMESTAMPDIFF(HOUR, `check`.start_time, `check`.end_time) < :maxWorkingTime) order by `check`.id desc", nativeQuery = true)
+    fun findChecksByFilters(userId : Long, startDate : LocalDateTime, endDate : LocalDateTime, companyName : String, minWorkingTime : Int, maxWorkingTime : Int, pageable : Pageable) : Page<Check> //mysql
+}
