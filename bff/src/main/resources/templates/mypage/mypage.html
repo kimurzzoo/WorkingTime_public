@@ -1,58 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyPage</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
-    <link href="../../static/css/header.css" rel="stylesheet"/>
+    <link href="/css/header.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
 </head>
+
 <body>
     <header>
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="d-lg-block sidebar bg-white collapse show">
+        <nav id="sidebarMenu" class="sidebar bg-white" style="display: none;">
             <div class="position-sticky">
                 <div class="list-group list-group-flush mx-3 mt-4">
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-lock fa-fw me-3"></i><span>Check</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/check/check" class="list-group-item list-group-item-action py-2 ripple"><i
+                            class="fas fa-lock fa-fw me-3"></i><span>Check</span></a>
+                    <a href="/mypage/mypage" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>MyPage</span>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/check/mycheck" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-area fa-fw me-3"></i><span>My Checks</span>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/rank/rank" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-lock fa-fw me-3"></i><span>Rank</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/chat/chat" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-chart-line fa-fw me-3"></i><span>Chat</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a id="logout-btn" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-pie fa-fw me-3"></i><span>Logout</span>
                     </a>
                 </div>
             </div>
         </nav>
         <!-- Sidebar -->
-    
+
         <!-- Navbar -->
         <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
             <!-- Container wrapper -->
             <div class="container-fluid">
                 <!-- Toggle button -->
-                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
-                    aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
-                    <img src="../../static/img/hamburger.png"/>
+                <button id="menu-btn" style="background-color: rgba(0, 0, 0, 0); border: none">
+                    <img src="/img/hamburger.png" />
                 </button>
-    
+
                 <!-- Brand -->
                 <a class="navbar-brand" href="#">Working Time
                 </a>
             </div>
             <!-- Container wrapper -->
             <ul class="navbar-nav ms-auto d-flex flex-row">
-                <p>달쌈</p>
+                <p></p>
             </ul>
         </nav>
         <!-- Navbar -->
@@ -67,8 +68,9 @@
                             Enter new nickname.
                         </p>
                         <div class="form-outline">
-                            <input type="text" id="typeNickname" class="form-control my-3">
-                            <label class="form-label" for="typeNickname" style="margin-left: 0px;">New Nickname input</label>
+                            <input type="text" id="typeNickname" class="form-control my-3 active">
+                            <label class="form-label" for="typeNickname" style="margin-left: 0px;">New Nickname
+                                input</label>
                             <div class="form-notch">
                                 <div class="form-notch-leading" style="width: 9px;"></div>
                                 <div class="form-notch-middle" style="width: 73.6px;"></div>
@@ -88,8 +90,9 @@
                             Enter new company.
                         </p>
                         <div class="form-outline">
-                            <input type="text" id="typeCompany" class="form-control my-3">
-                            <label class="form-label" for="typeCompany" style="margin-left: 0px;">New Company input</label>
+                            <input type="text" id="typeCompany" class="form-control my-3 active">
+                            <label class="form-label" for="typeCompany" style="margin-left: 0px;">New Company
+                                input</label>
                             <div class="form-notch">
                                 <div class="form-notch-leading" style="width: 9px;"></div>
                                 <div class="form-notch-middle" style="width: 73.6px;"></div>
@@ -110,7 +113,8 @@
                         </p>
                         <div class="form-outline">
                             <input type="text" id="typeCurPassword" class="form-control my-3">
-                            <label class="form-label" for="typeCurPassword" style="margin-left: 0px;">Current Password input</label>
+                            <label class="form-label" for="typeCurPassword" style="margin-left: 0px;">Current Password
+                                input</label>
                             <div class="form-notch">
                                 <div class="form-notch-leading" style="width: 9px;"></div>
                                 <div class="form-notch-middle" style="width: 73.6px;"></div>
@@ -128,7 +132,8 @@
                         </div>
                         <div class="form-outline">
                             <input type="text" id="typeNewPasswordConfirm" class="form-control my-3">
-                            <label class="form-label" for="typeNewPasswordConfirm" style="margin-left: 0px;">New Password Confirm input</label>
+                            <label class="form-label" for="typeNewPasswordConfirm" style="margin-left: 0px;">New
+                                Password Confirm input</label>
                             <div class="form-notch">
                                 <div class="form-notch-leading" style="width: 9px;"></div>
                                 <div class="form-notch-middle" style="width: 73.6px;"></div>
@@ -153,6 +158,7 @@
             </section>
         </div>
     </main>
-    <script src="../../static/js/mypage/mypage.js"></script>
+    <script src="/js/mypage/mypage.js"></script>
 </body>
+
 </html>

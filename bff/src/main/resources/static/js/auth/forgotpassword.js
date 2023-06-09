@@ -22,11 +22,11 @@ window.onload = function () {
 		console.log(new Date(Date.now()))
 		if (new Date(Date.now()) > nowDate) {
 			console.log("expired")
-			fetch("http://192.168.0.9:8080/auth/reissue")
+			fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
 				.then((response) => response.json())
 				.then((data) => {
 					if (data.code == 200) {
-						location.href = "../../templates/check/check.html"
+						location.href = "/check/check"
 					}
 					else {
 						deleteCookie("Authorization")
@@ -36,15 +36,15 @@ window.onload = function () {
 		}
 		else {
 			console.log("not expired")
-			location.href = "../../templates/check/check.html"
+			location.href = "/check/check"
 		}
 	}
 	else {
-		fetch("http://192.168.0.9:8080/auth/reissue")
+		fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.code == 200) {
-					location.href = "../../templates/check/check.html"
+					location.href = "/check/check"
 				}
 				else {
 					deleteCookie("Authorization")

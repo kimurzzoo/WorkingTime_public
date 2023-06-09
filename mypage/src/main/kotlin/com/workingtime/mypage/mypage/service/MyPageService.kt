@@ -6,6 +6,7 @@ import com.workingtime.mypage.check.entity.Check
 import com.workingtime.mypage.check.entity.Company
 import com.workingtime.mypage.check.repository.CheckRepository
 import com.workingtime.mypage.check.repository.CompanyRepository
+import com.workingtime.mypage.mypage.dto.InfoResponseDTO
 import com.workingtime.mypage.mypage.dto.MyChecksResponseDTO
 import com.workingtime.mypage.util.date.DateUtil
 import com.workingtime.mypage.util.encryption.sym.AES256Encoder
@@ -24,6 +25,31 @@ class MyPageService(private val userRepository: UserRepository,
                     private val companyRepository: CompanyRepository,
                     private val checkRepository: CheckRepository,
                     private val encoder : AES256Encoder){
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
+    fun info(email : String) : InfoResponseDTO
+    {
+        try {
+            val user : User? = userRepository.findByEmailAddress(encoder.encrypt(email))
+            if(user == null)
+            {
+                return InfoResponseDTO("", "", 1000, "there is no user like you")
+            }
+            else if(!user.enabled)
+            {
+                return InfoResponseDTO("", "", 1001, "you are banned")
+            }
+            else
+            {
+                return InfoResponseDTO(encoder.decrypt(user.nickname), user.company!!.name, 200, "info success")
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+            return InfoResponseDTO("", "", 500, "exception caused")
+        }
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     fun changeNickname(email : String, newNickname : String) : ResponseDTO

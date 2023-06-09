@@ -17,7 +17,7 @@
   7. [withdrawal](#7-withdrawal)
 
 
-### 1. Login
+### [1](#api-lists). Login
 
     POST /login
     
@@ -36,7 +36,7 @@
 #
 
 
-### 2. Register
+### [2](#api-lists). Register
 
     POST /auth/register
 
@@ -56,7 +56,7 @@
 
 #
 
-### 3. Send Verification Email
+### [3](#api-lists). Send Verification Email
 
     GET /auth/sendverificationemail
 
@@ -71,7 +71,7 @@
 
 #
 
-### 4. Email Verification
+### [4](#api-lists). Email Verification
 
     GET /auth/emailverification
 
@@ -87,7 +87,7 @@
 
 #
 
-### 5. Reissue
+### [5](#api-lists). Reissue
 
     GET /auth/reissue
 
@@ -103,7 +103,7 @@
 
 #
 
-### 6. Logout
+### [6](#api-lists). Logout
 
     GET /auth/logout
 

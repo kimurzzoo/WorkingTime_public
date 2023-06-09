@@ -25,3 +25,5 @@ class MyChecksResponseDTO(val maxPage : Int,
                             description : String) : ResponseDTO(code = code, description = description) {
 
 }
+
+class InfoResponseDTO(val nickname : String, val companyName : String, code : Int, description: String) : ResponseDTO(code = code, description = description)

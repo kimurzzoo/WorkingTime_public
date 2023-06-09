@@ -11,7 +11,7 @@ window.onload = function(){
     }
     else
     {
-        fetch("http://192.168.0.9:8080/auth/reissue")
+        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
@@ -20,7 +20,7 @@ window.onload = function(){
                 }
                 else
                 {
-                    location.href = "../../templates/auth/login.html"
+                    location.href = "/auth/login"
                 }
             });
     }
@@ -32,7 +32,7 @@ window.onload = function(){
     console.log(nowDate)
     if(Date.now() > nowDate)
     {
-        fetch("http://192.168.0.9:8080/auth/reissue")
+        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
@@ -41,7 +41,7 @@ window.onload = function(){
                 }
                 else
                 {
-                    location.href = "../../templates/auth/login.html"
+                    location.href = "/auth/login"
                 }
             });
     }

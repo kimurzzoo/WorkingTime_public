@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
-    <link href="../../static/css/header.css" rel="stylesheet"/>
+    <link href="/css/header.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
 
@@ -14,22 +14,22 @@
 <body>
     <header>
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="d-lg-block sidebar bg-white collapse show">
+        <nav id="sidebarMenu" class="sidebar bg-white" style="display: none;">
             <div class="position-sticky">
                 <div class="list-group list-group-flush mx-3 mt-4">
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/check/check" class="list-group-item list-group-item-action py-2 ripple"><i
                         class="fas fa-lock fa-fw me-3"></i><span>Check</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/mypage/mypage" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>MyPage</span>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/check/mycheck" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-area fa-fw me-3"></i><span>My Checks</span>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/rank/rank" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-lock fa-fw me-3"></i><span>Rank</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/chat/chat" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-chart-line fa-fw me-3"></i><span>Chat</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+                    <a id="logout-btn" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-pie fa-fw me-3"></i><span>Logout</span>
                     </a>
                 </div>
@@ -42,9 +42,8 @@
             <!-- Container wrapper -->
             <div class="container-fluid">
                 <!-- Toggle button -->
-                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
-                    aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
-                    <img src="../../static/img/hamburger.png"/>
+                <button id="menu-btn" style="background-color: rgba(0, 0, 0, 0); border: none">
+                    <img src="/img/hamburger.png"/>
                 </button>
     
                 <!-- Brand -->
@@ -53,23 +52,24 @@
             </div>
             <!-- Container wrapper -->
             <ul class="navbar-nav ms-auto d-flex flex-row">
-                <p>달쌈</p>
+                <p></p>
             </ul>
         </nav>
         <!-- Navbar -->
     </header>
     <main style="margin-top: 58px">
         <div class="container pt-4">
-            
+            <section class="p-4 d-flex justify-content-center py-4 bgeee w-100">
+                <div class="card text-center" style="width: 300px;">
+                    <div class="card-header h5 text-white bg-primary">Check</div>
+                    <div class="card-body px-5">
+                        <p style="visibility: hidden;" id="working-time"></p>
+                        <a class="btn btn-primary w-100" id="btn-start">START</a>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
-    <section class="p-4 d-flex justify-content-center py-4 bgeee w-100">
-        <div class="card text-center" style="width: 300px;">
-            <div class="card-header h5 text-white bg-primary">Check</div>
-            <div class="card-body px-5">
-                <a href="#" class="btn btn-primary w-100">START</a>
-            </div>
-        </div>
-    </section>
+    <script src="/js/check/check.js"></script>
 </body>
 </html>

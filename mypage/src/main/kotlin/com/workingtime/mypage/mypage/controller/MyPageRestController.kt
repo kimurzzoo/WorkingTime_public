@@ -1,5 +1,6 @@
 package com.workingtime.mypage.mypage.controller
 
+import com.workingtime.mypage.mypage.dto.InfoResponseDTO
 import com.workingtime.mypage.mypage.dto.MyChecksDTO
 import com.workingtime.mypage.mypage.dto.MyChecksResponseDTO
 import com.workingtime.mypage.mypage.service.MyPageService
@@ -10,6 +11,16 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/mypage")
 class MyPageRestController(private val myPageService: MyPageService) {
+
+    @GetMapping("/info")
+    fun info(@RequestHeader(value = "X-Authorization-Id", defaultValue = "") email : String) : InfoResponseDTO
+    {
+        if(!StringUtils.hasText(email))
+        {
+            return InfoResponseDTO("", "", 400, "Bad Request")
+        }
+        return myPageService.info(email)
+    }
 
     @GetMapping("/changenickname")
     fun changeNickname(@RequestHeader(value = "X-Authorization-Id", defaultValue = "") email : String, @RequestParam(value = "newnickname", defaultValue = "") newNickname : String) : ResponseDTO

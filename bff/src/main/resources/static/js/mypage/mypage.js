@@ -11,6 +11,45 @@ var btnChangeCompany = document.querySelector("#btn-change-company")
 var btnChangePassword = document.querySelector("#btn-change-password")
 var btnWithdrawal = document.querySelector("#btn-change-nick")
 
+var menuBtn = document.querySelector("#menu-btn")
+var isOpen = false;
+
+var sideBar = document.querySelector("#sidebarMenu")
+
+var logoutBtn = document.querySelector("#logout-btn");
+
+menuBtn.addEventListener("click", function(){
+    if(isOpen)
+    {
+        sideBar.style.display = "none";
+        isOpen = false;
+    }
+    else
+    {
+        sideBar.style.display = "";
+        isOpen = true;
+    }
+});
+
+logoutBtn.addEventListener("click", function(){
+    let config = {
+        method: "GET",
+        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+      };
+    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/logout", config)
+        .then((response) => response.json())
+        .then((data) => {
+            if(data.code == 200 || data.code == 400)
+            {
+                location.href = "/auth/login"
+            }
+            else
+            {
+                alert(data.description);
+            }
+        });
+});
+
 
 function get_cookie(name) {
     var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
@@ -22,16 +61,16 @@ btnChangeNick.addEventListener("click", function(){
         method: "GET",
         headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
       };
-    fetch("http://192.168.0.9:8080/mypage/changenickname?newnickname=" + typeNickname.value, config)
+    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/changenickname?newnickname=" + typeNickname.value, config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "../../templates/mypage/mypage.html"
+                location.href = "/mypage/mypage"
             }
             else if(data.code == 400)
             {
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
         });
 });
@@ -41,16 +80,16 @@ btnChangeCompany.addEventListener("click", function(){
         method: "GET",
         headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
       };
-    fetch("http://192.168.0.9:8080/mypage/changecompany?companyname=" + typeCompany.value, config)
+    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/changecompany?companyname=" + typeCompany.value, config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "../../templates/mypage/mypage.html"
+                location.href = "/mypage/mypage"
             }
             else if(data.code == 400)
             {
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
         });
 });
@@ -65,22 +104,22 @@ btnChangePassword.addEventListener("click", function(){
           newPasswordConfirm : typeNewPasswordConfirm.value
         }),
       };
-    fetch("http://192.168.0.9:8080/auth/changepassword", config)
+    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/changepassword", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
             else if(data.code == 400)
             {
                 alert("change password failed")
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
             else
             {
                 alert(data.description)
-                location.href = "../../templates/mypage/mypage.html"
+                location.href = "/mypage/mypage"
             }
         });
 });
@@ -90,17 +129,17 @@ btnWithdrawal.addEventListener("click", function(){
         method: "GET",
         headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
       };
-    fetch("http://192.168.0.9:8080/auth/withdrawal", config)
+    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/withdrawal", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
             else
             {
                 alert("withdrawal failed")
-                location.href = "../../templates/auth/login.html"
+                location.href = "/auth/login"
             }
         });
 });
@@ -113,7 +152,7 @@ window.onload = function(){
     }
     else
     {
-        fetch("http://192.168.0.9:8080/auth/reissue")
+        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
@@ -122,7 +161,7 @@ window.onload = function(){
                 }
                 else
                 {
-                    location.href = "../../templates/auth/login.html"
+                    location.href = "/auth/login"
                 }
             });
     }
@@ -134,17 +173,112 @@ window.onload = function(){
     console.log(nowDate)
     if(Date.now() > nowDate)
     {
-        fetch("http://192.168.0.9:8080/auth/reissue")
+        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
                 {
                     accessToken = get_cookie("Authorization").replace('+', ' ');
+
+                    let config = {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+                      };
+            
+                    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/info", config)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if(data.code == 200)
+                            {
+                                typeNickname.value = data.nickname;
+                                typeCompany.value = data.companyName;
+                            }
+                            else
+                            {
+                                location.href = "/auth/login"
+                            }
+                        });
                 }
                 else
                 {
-                    location.href = "../../templates/auth/login.html"
+                    location.href = "/auth/login"
+                }
+            });
+    }
+    else
+    {
+        let config = {
+            method: "GET",
+            headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+          };
+
+        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/info", config)
+            .then((response) => response.json())
+            .then((data) => {
+                if(data.code == 200)
+                {
+                    typeNickname.value = data.nickname;
+                    typeCompany.value = data.companyName;
+                }
+                else
+                {
+                    location.href = "/auth/login"
                 }
             });
     }
 };
+
+document.querySelector("#typeNewPassword").addEventListener("input",()=> {
+    if(document.querySelector("#typeNewPassword").value == "")
+    {
+        document.querySelector('#typeNewPassword').classList.remove("active");
+    }
+    else
+    {
+        document.querySelector('#typeNewPassword').classList.add("active");
+    }
+});
+
+document.querySelector("#typeNickname").addEventListener("input",()=> {
+    if(document.querySelector("#typeNickname").value == "")
+    {
+        document.querySelector('#typeNickname').classList.remove("active");
+    }
+    else
+    {
+        document.querySelector('#typeNickname').classList.add("active");
+    }
+});
+
+document.querySelector("#typeCompany").addEventListener("input",()=> {
+    if(document.querySelector("#typeCompany").value == "")
+    {
+        document.querySelector('#typeCompany').classList.remove("active");
+    }
+    else
+    {
+        document.querySelector('#typeCompany').classList.add("active");
+    }
+});
+
+document.querySelector("#typeCurPassword").addEventListener("input",()=> {
+    if(document.querySelector("#typeCurPassword").value == "")
+    {
+        document.querySelector('#typeCurPassword').classList.remove("active");
+    }
+    else
+    {
+        document.querySelector('#typeCurPassword').classList.add("active");
+    }
+});
+
+document.querySelector("#typeNewPasswordConfirm").addEventListener("input",()=> {
+    if(document.querySelector("#typeNewPasswordConfirm").value == "")
+    {
+        document.querySelector('#typeNewPasswordConfirm').classList.remove("active");
+    }
+    else
+    {
+        document.querySelector('#typeNewPasswordConfirm').classList.add("active");
+    }
+});
