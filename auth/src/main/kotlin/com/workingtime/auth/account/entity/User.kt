@@ -1,5 +1,7 @@
 package com.workingtime.auth.account.entity
 
+import com.workingtime.auth.check.entity.Check
+import com.workingtime.auth.check.entity.Company
 import jakarta.persistence.*
 
 @Entity
@@ -28,4 +30,12 @@ class User(nickname : String, emailAddress : String, m_password : String, role :
 
     @Column(name = "verified", nullable = false)
     var verified : Boolean = false
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    var company : Company? = null
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL],)
+    @OrderBy("id desc")
+    var checks : MutableList<Check> = mutableListOf()
 }

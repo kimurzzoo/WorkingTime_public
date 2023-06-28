@@ -62,7 +62,8 @@ class AuthRestController(private val authService: AuthService,
             val refreshToken : String = jwtTokenProvider.createRefreshToken(indicator)
 
             cookieProvider.addTokenCookies(response, accessToken, indicator, refreshToken)
-            refreshTokenRepository.save(RefreshToken(registerDTO.email, indicator, refreshToken))
+            refreshTokenRepository.save(RefreshToken(refreshToken, indicator, registerDTO.email))
+            println("register - refreshtoken : $refreshToken, indicator : $indicator")
         }
         return ResponseDTO(responseDTO.code, responseDTO.description)
     }
@@ -78,18 +79,11 @@ class AuthRestController(private val authService: AuthService,
     }
 
     @GetMapping("/emailverification")
-    fun emailVerification(@RequestHeader(value = "X-Authorization-Id", defaultValue = "") email : String, @RequestParam(value = "redeemcode", defaultValue = "") redeemcode : String, request: HttpServletRequest, response : HttpServletResponse) : ResponseDTO
-    {
-        if (!StringUtils.hasText(email) || !StringUtils.hasText(redeemcode))
-        {
+    fun emailVerification(@RequestHeader(value = "X-Authorization-Id", defaultValue = "") email: String, @RequestParam(value = "redeemcode", defaultValue = "") redeemcode: String, request: HttpServletRequest, response: HttpServletResponse): ResponseDTO {
+        if (!StringUtils.hasText(email) || !StringUtils.hasText(redeemcode)) {
             return ResponseDTO(400, "Bad Request")
         }
-        val emailVerificationResponse = authService.emailVerification(email, redeemcode, IpUtil.getRemoteIp(request))
-        if(emailVerificationResponse.code == 200 || emailVerificationResponse.code == 1000)
-        {
-            cookieProvider.deleteTokenCookies(response)
-        }
-        return emailVerificationResponse
+        return authService.emailVerification(email, redeemcode, IpUtil.getRemoteIp(request))
     }
 
     @GetMapping("/reissue")
@@ -115,7 +109,7 @@ class AuthRestController(private val authService: AuthService,
             return ResponseDTO(400, "Bad Request")
         }
         val logoutResponse = authService.logout(email, indicator, refreshtoken)
-        if(logoutResponse.code == 200 || logoutResponse.code == 1000)
+        if(logoutResponse.code == 200 || logoutResponse.code == 1061 || logoutResponse.code == 1000)
         {
             cookieProvider.deleteTokenCookies(response)
         }
@@ -153,22 +147,6 @@ class AuthRestController(private val authService: AuthService,
         return changePasswordResponse
     }
 
-    @GetMapping("/resetpassword")
-    fun resetPassword(@RequestHeader(value = "X-Authorization-Id", defaultValue = "") email : String, request: HttpServletRequest, response: HttpServletResponse) : ResponseDTO
-    {
-        if (!StringUtils.hasText(email))
-        {
-            return ResponseDTO(400, "Bad Request")
-        }
-
-        val resetPasswordResponse = authService.resetPassword(email)
-        if(resetPasswordResponse.code == 200 || resetPasswordResponse.code == 1000)
-        {
-            cookieProvider.deleteTokenCookies(response)
-        }
-        return resetPasswordResponse
-    }
-
     @GetMapping("/forgotpassword")
     fun forgotPassword(@RequestParam(value = "email", defaultValue = "") email : String, request: HttpServletRequest, response: HttpServletResponse) : ResponseDTO
     {
@@ -183,5 +161,11 @@ class AuthRestController(private val authService: AuthService,
             cookieProvider.deleteTokenCookies(response)
         }
         return forgotPasswordResponse
+    }
+
+    @GetMapping("/hb")
+    fun heartbeat()
+    {
+
     }
 }

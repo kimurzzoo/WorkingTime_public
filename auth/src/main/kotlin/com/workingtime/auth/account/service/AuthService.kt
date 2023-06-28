@@ -9,6 +9,7 @@ import com.workingtime.auth.account.entity.User
 import com.workingtime.auth.account.jwt.JwtTokenProvider
 import com.workingtime.auth.account.repository.UserRepository
 import com.workingtime.auth.account.repository.redis.RefreshTokenRepository
+import com.workingtime.auth.check.repository.CheckRepository
 import com.workingtime.auth.util.encryption.hash.BCryptPasswordEncoder
 import com.workingtime.auth.util.encryption.sym.AES256Encoder
 import com.workingtime.auth.util.network.dto.ResponseDTO
@@ -27,6 +28,7 @@ import java.util.*
 
 @Service
 class AuthService(private val userRepository : UserRepository,
+                  private val checkRepository: CheckRepository,
                   private val emailService: EmailService,
                   private val jwtTokenProvider: JwtTokenProvider,
                   private val refreshTokenRepository: RefreshTokenRepository,
@@ -36,7 +38,7 @@ class AuthService(private val userRepository : UserRepository,
 
     private val logger = LoggerFactory.getLogger("AuthService")
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun register(registerDTO : RegisterDTO, ipaddress : String) : ResponseDTO
     {
         logger.info("{} : register nickname : {}, email : {}, password : {}, passwordConfirm : {}", ipaddress, registerDTO.nickname, registerDTO.email, registerDTO.password, registerDTO.passwordConfirm)
@@ -89,7 +91,6 @@ class AuthService(private val userRepository : UserRepository,
             result.code = 200
             result.description = "register success"
 
-            val redeemCode : String = emailService.sendSimpleMessage(registerDTO.email)
             logger.info("{} : register success nickname : {}, email : {}, password : {}, passwordConfirm : {}", ipaddress, registerDTO.nickname, registerDTO.email, registerDTO.password, registerDTO.passwordConfirm)
             return result
         }
@@ -119,7 +120,7 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun login(loginDTO: LoginDTO, request: HttpServletRequest) : TokenResultDTO
     {
         val ipaddress = IpUtil.getRemoteIp(request)
@@ -155,7 +156,7 @@ class AuthService(private val userRepository : UserRepository,
 
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun sendVerificationEmail(email : String) : ResponseDTO
     {
         try {
@@ -182,7 +183,7 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun emailVerification(email : String, redeemcode : String, ipaddress: String) : ResponseDTO
     {
         try {
@@ -220,10 +221,11 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun reissue(indicator : String, refreshtoken : String) : TokenResultDTO
     {
         try {
+            println("reissue - refreshtoken : $refreshtoken, indicator : $indicator")
             val refreshTokenOp = refreshTokenRepository.findByIdAndIndicator(refreshtoken, indicator)
             if(refreshTokenOp == null)
             {
@@ -253,7 +255,7 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun logout(email: String, indicator: String, refreshtoken: String) : ResponseDTO
     {
         try {
@@ -278,12 +280,14 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun withdrawal(email : String) : ResponseDTO
     {
         return try {
             val userEncodedEmail = encoder.encrypt(email)
             if(userRepository.existsByEmailAddress(userEncodedEmail)) {
+                val user = userRepository.findByEmailAddress(userEncodedEmail)
+                checkRepository.deleteByUserId(user!!.id!!)
                 userRepository.deleteByEmailAddress(userEncodedEmail)
                 redisUtil.deleteData(email)
                 ResponseDTO(200, "withdrawal success")
@@ -296,7 +300,7 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun changePassword(email : String, password : String, newPassword : String, newPasswordConfirm : String) : ResponseDTO
     {
         try {
@@ -331,7 +335,7 @@ class AuthService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun resetPassword(email : String) : ResponseDTO
     {
         try

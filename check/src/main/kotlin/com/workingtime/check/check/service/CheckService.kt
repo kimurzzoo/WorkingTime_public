@@ -19,7 +19,7 @@ class CheckService(private val userRepository : UserRepository,
                     private val checkRepository: CheckRepository,
                    private val encoder : AES256Encoder) {
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun startCheck(email : String) : ResponseDTO
     {
         try {
@@ -56,7 +56,7 @@ class CheckService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun endCheck(email : String) : ResponseDTO
     {
         try {
@@ -97,7 +97,7 @@ class CheckService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun modifyStartTime(email : String, checkId : Long, modifiedTime: String) : ResponseDTO
     {
         try {
@@ -157,7 +157,7 @@ class CheckService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun modifyEndTime(email : String, checkId : Long, modifiedTime: String) : ResponseDTO
     {
         try {
@@ -217,7 +217,7 @@ class CheckService(private val userRepository : UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun deleteCheck(email : String, checkId: Long) : ResponseDTO
     {
         try {

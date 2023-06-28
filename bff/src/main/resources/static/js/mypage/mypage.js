@@ -9,7 +9,7 @@ var typeNewPasswordConfirm = document.querySelector("#typeNewPasswordConfirm")
 var btnChangeNick = document.querySelector("#btn-change-nick")
 var btnChangeCompany = document.querySelector("#btn-change-company")
 var btnChangePassword = document.querySelector("#btn-change-password")
-var btnWithdrawal = document.querySelector("#btn-change-nick")
+var btnWithdrawal = document.querySelector("#btn-withdrawal")
 
 var menuBtn = document.querySelector("#menu-btn")
 var isOpen = false;
@@ -34,9 +34,10 @@ menuBtn.addEventListener("click", function(){
 logoutBtn.addEventListener("click", function(){
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/logout", config)
+    fetch("https://workingtime-be.kro.kr/auth/logout", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200 || data.code == 400)
@@ -50,6 +51,9 @@ logoutBtn.addEventListener("click", function(){
         });
 });
 
+function deleteCookie(name) {
+	document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 function get_cookie(name) {
     var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
@@ -59,14 +63,15 @@ function get_cookie(name) {
 btnChangeNick.addEventListener("click", function(){
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/changenickname?newnickname=" + typeNickname.value, config)
+    fetch("https://workingtime-be.kro.kr/mypage/changenickname?newnickname=" + typeNickname.value, config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "/mypage/mypage"
+                location.href = "/mypage"
             }
             else if(data.code == 400)
             {
@@ -78,14 +83,15 @@ btnChangeNick.addEventListener("click", function(){
 btnChangeCompany.addEventListener("click", function(){
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/changecompany?companyname=" + typeCompany.value, config)
+    fetch("https://workingtime-be.kro.kr/mypage/changecompany?companyname=" + typeCompany.value, config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
             {
-                location.href = "/mypage/mypage"
+                location.href = "/mypage"
             }
             else if(data.code == 400)
             {
@@ -97,14 +103,15 @@ btnChangeCompany.addEventListener("click", function(){
 btnChangePassword.addEventListener("click", function(){
     let config = {
         method: "POST",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include',
         body: JSON.stringify({
           password : typeCurPassword.value,
           newPassword : typeNewPassword.value,
           newPasswordConfirm : typeNewPasswordConfirm.value
         }),
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/changepassword", config)
+    fetch("https://workingtime-be.kro.kr/auth/changepassword", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
@@ -119,7 +126,7 @@ btnChangePassword.addEventListener("click", function(){
             else
             {
                 alert(data.description)
-                location.href = "/mypage/mypage"
+                location.href = "/mypage"
             }
         });
 });
@@ -127,9 +134,10 @@ btnChangePassword.addEventListener("click", function(){
 btnWithdrawal.addEventListener("click", function(){
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/withdrawal", config)
+    fetch("https://workingtime-be.kro.kr/auth/withdrawal", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)
@@ -149,22 +157,16 @@ window.onload = function(){
     if(accessToken != null)
     {
         accessToken = accessToken.replace('+', ' ');
+        tokeninit();
     }
     else
     {
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.code == 200)
-                {
-                    accessToken = get_cookie("Authorization").replace('+', ' ');
-                }
-                else
-                {
-                    location.href = "/auth/login"
-                }
-            });
+        reissueinit();
     }
+};
+
+function tokeninit()
+{
     var base64Payload = accessToken.replace('Bearer ', '').split('.')[1]; //value 0 -> header, 1 -> payload, 2 -> VERIFY SIGNATURE
     var payload = atob(base64Payload); 
     var result = JSON.parse(payload.toString())
@@ -173,46 +175,55 @@ window.onload = function(){
     console.log(nowDate)
     if(Date.now() > nowDate)
     {
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.code == 200)
-                {
-                    accessToken = get_cookie("Authorization").replace('+', ' ');
-
-                    let config = {
-                        method: "GET",
-                        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
-                      };
-            
-                    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/info", config)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if(data.code == 200)
-                            {
-                                typeNickname.value = data.nickname;
-                                typeCompany.value = data.companyName;
-                            }
-                            else
-                            {
-                                location.href = "/auth/login"
-                            }
-                        });
-                }
-                else
-                {
-                    location.href = "/auth/login"
-                }
-            });
+        reissueinit();
     }
     else
     {
+        myinfoinit(result);
+    }
+}
+
+function reissueinit()
+{
+    let config = {
+        method: "GET",
+        headers: { "Content-Type": "application/json"},
+        credentials: 'include'
+    };
+    fetch("https://workingtime-be.kro.kr/auth/reissue", config)
+        .then((response) => response.json())
+        .then((data) => {
+            if(data.code == 200)
+            {
+                accessToken = get_cookie("Authorization").replace('+', ' ');
+                tokeninit();
+            }
+            else
+            {
+                location.href = "/auth/login"
+            }
+        });
+}
+
+function myinfoinit(result)
+{
+    if(result.role == "ROLE_USER")
+    {
+        location.href = "/auth/emailverification";
+    }
+    else if(result.role == "ROLE_BANNEDUSER")
+    {
+        location.href = "/banned/banned";
+    }
+    else if(result.role == "ROLE_VERIFIEDUSER" || result.role == "ROLE_ADMIN" || result.role == "ROLE_SUPERADMIN")
+    {
         let config = {
             method: "GET",
-            headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+            headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+            credentials: 'include'
           };
-
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/info", config)
+    
+        fetch("https://workingtime-be.kro.kr/mypage/info", config)
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
@@ -226,59 +237,39 @@ window.onload = function(){
                 }
             });
     }
-};
-
-document.querySelector("#typeNewPassword").addEventListener("input",()=> {
-    if(document.querySelector("#typeNewPassword").value == "")
-    {
-        document.querySelector('#typeNewPassword').classList.remove("active");
-    }
     else
     {
-        document.querySelector('#typeNewPassword').classList.add("active");
+        deleteCookie("Authorization")
+		
+        location.href = "/error";
     }
-});
+}
 
-document.querySelector("#typeNickname").addEventListener("input",()=> {
-    if(document.querySelector("#typeNickname").value == "")
-    {
-        document.querySelector('#typeNickname').classList.remove("active");
-    }
-    else
-    {
-        document.querySelector('#typeNickname').classList.add("active");
-    }
-});
+function activeInput(inputQuery)
+{
+    inputQuery.addEventListener("input",()=> {
+        if(inputQuery.value == "")
+        {
+            inputQuery.classList.remove("active");
+        }
+        else
+        {
+            inputQuery.classList.add("active");
+        }
+    });
+}
 
-document.querySelector("#typeCompany").addEventListener("input",()=> {
-    if(document.querySelector("#typeCompany").value == "")
-    {
-        document.querySelector('#typeCompany').classList.remove("active");
-    }
-    else
-    {
-        document.querySelector('#typeCompany').classList.add("active");
-    }
-});
+var inputTypeNickname = document.querySelector("#typeNickname");
+activeInput(inputTypeNickname);
 
-document.querySelector("#typeCurPassword").addEventListener("input",()=> {
-    if(document.querySelector("#typeCurPassword").value == "")
-    {
-        document.querySelector('#typeCurPassword').classList.remove("active");
-    }
-    else
-    {
-        document.querySelector('#typeCurPassword').classList.add("active");
-    }
-});
+var inputTypeCompany = document.querySelector("#typeCompany");
+activeInput(inputTypeCompany);
 
-document.querySelector("#typeNewPasswordConfirm").addEventListener("input",()=> {
-    if(document.querySelector("#typeNewPasswordConfirm").value == "")
-    {
-        document.querySelector('#typeNewPasswordConfirm').classList.remove("active");
-    }
-    else
-    {
-        document.querySelector('#typeNewPasswordConfirm').classList.add("active");
-    }
-});
+var inputTypeCurPassword = document.querySelector("#typeCurPassword");
+activeInput(inputTypeCurPassword);
+
+var inputTypeNewPassword = document.querySelector("#typeNewPassword");
+activeInput(inputTypeNewPassword);
+
+var inputTypeNewPasswordConfirm = document.querySelector("#typeNewPasswordConfirm");
+activeInput(inputTypeNewPasswordConfirm);

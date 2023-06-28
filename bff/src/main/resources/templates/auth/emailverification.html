@@ -15,7 +15,7 @@
 <body>
     <header>
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="d-lg-block sidebar bg-white collapse show">
+        <nav id="sidebarMenu" class="sidebar bg-white" style="display: none;">
             <div class="position-sticky">
                 <div class="list-group list-group-flush mx-3 mt-4">
                     <a href="#" class="list-group-item list-group-item-action py-2 ripple">
@@ -34,13 +34,12 @@
             <!-- Container wrapper -->
             <div class="container-fluid">
                 <!-- Toggle button -->
-                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
-                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <button id="menu-btn" style="background-color: rgba(0, 0, 0, 0); border: none">
                     <img src="/img/hamburger.png"/>
                 </button>
     
                 <!-- Brand -->
-                <a class="navbar-brand" href="#">Working Time
+                <a class="navbar-brand" href="https://workingtime.kro.kr">Working Time
                 </a>
             </div>
             <!-- Container wrapper -->
@@ -52,30 +51,33 @@
     </header>
     <main style="margin-top: 58px">
         <div class="container pt-4">
-            
-        </div>
-    </main>
-    <section class="p-4 d-flex justify-content-center py-4 bgeee w-100">
-        <div class="card text-center" style="width: 300px;">
-            <div class="card-header h5 text-white bg-primary">Email Verification</div>
-            <div class="card-body px-5">
-                <p class="card-text py-2">
-                    Enter your redeem code we send within 5 minutes.
-                </p>
-                <div class="form-outline">
-                    <input type="text" id="typeRedeemcode" class="form-control my-3">
-                    <label class="form-label" for="typeRedeemcode" style="margin-left: 0px;">Redeem code</label>
-                    <div class="form-notch">
-                        <div class="form-notch-leading" style="width: 9px;"></div>
-                        <div class="form-notch-middle" style="width: 88px;"></div>
-                        <div class="form-notch-trailing"></div>
+            <section class="p-4 d-flex justify-content-center py-4 bgeee w-100">
+                <div class="card text-center" style="width: 300px;">
+                    <div class="card-header h5 text-white bg-primary">Email Verification</div>
+                    <div class="card-body px-5">
+                        <p class="card-text py-2">
+                            Enter your redeem code we send within 5 minutes.
+                        </p>
+                        <div class="form-outline">
+                            <input type="text" id="typeRedeemcode" class="form-control my-3">
+                            <label class="form-label" for="typeRedeemcode" style="margin-left: 0px;">Redeem code</label>
+                            <div class="form-notch">
+                                <div class="form-notch-leading" style="width: 9px;"></div>
+                                <div class="form-notch-middle" style="width: 88px;"></div>
+                                <div class="form-notch-trailing"></div>
+                            </div>
+                        </div>
+                        <p id="time-remain"></p>
+                        <a id="btn-redeem" class="btn btn-primary w-100" style="margin-bottom: 10px;">SEND REDEEM CODE</a>
+                        <a id="btn-submit" style="display: none;" class="btn btn-primary w-100">SUBMIT</a>
                     </div>
                 </div>
-                <a id="" class="btn btn-primary w-100" style="margin-bottom: 10px;">SEND REDEEM CODE</a>
-                <a id="" class="btn btn-primary w-100">SUBMIT</a>
-            </div>
+            </section>
         </div>
-    </section>
+    </main>
+    
+
+    <script src="/js/auth/emailverification.js"></script>
 </body>
 
 </html>

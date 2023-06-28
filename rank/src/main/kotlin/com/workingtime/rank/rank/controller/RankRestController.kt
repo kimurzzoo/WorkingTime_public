@@ -50,4 +50,10 @@ class RankRestController(private val rankService: RankService) {
         }
         return rankService.avgTopWorkingTime(email, range, duration, order)
     }
+
+    @GetMapping("/hb")
+    fun heartbeat()
+    {
+
+    }
 }

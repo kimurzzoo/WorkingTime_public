@@ -5,24 +5,29 @@ var passwordConfirmForm = document.querySelector("#form3Example4cd");
 var registerBtn = document.querySelector("#btn-register");
 
 registerBtn.addEventListener("click", function() {
-    let config = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            nickname : nicknameForm.value,
-            email : emailForm.value,
-            password : passwordForm.value,
-            passwordConfirm : passwordConfirmForm.value
-        }),
-      };
-      fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/register", config)
-        .then((response) => response.json())
-        .then((data) => {
-            if(data.code == 200)
-            {
-                location.href = "/auth/emailverification"
-            }
-        });
+
+    if(document.querySelector("#form2Example3c").checked)
+    {
+        let config = {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            credentials: 'include',
+            body: JSON.stringify({
+                nickname : nicknameForm.value,
+                email : emailForm.value,
+                password : passwordForm.value,
+                passwordConfirm : passwordConfirmForm.value
+            }),
+          };
+          fetch("https://workingtime-be.kro.kr/auth/register", config)
+            .then((response) => response.json())
+            .then((data) => {
+                if(data.code == 200)
+                {
+                    location.href = "/auth/emailverification"
+                }
+            });
+    }
 });
 
 function deleteCookie(name) {
@@ -48,40 +53,81 @@ window.onload = function(){
         console.log(nowDate)
         if(Date.now() > nowDate)
         {
-            fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-                .then((response) => response.json())
-                .then((data) => {
-                    if(data.code == 200)
-                    {
-                        location.href = "/check/check"
-                    }
-                    else
-                    {
-                        deleteCookie("Authorization")
-                        deleteCookie("refreshtoken")
-                    }
-                });
+            reissueinit();
         }
         else
         {
-            location.href = "/check/check"
+            if(result.role == "ROLE_USER")
+			{
+				location.href = "/auth/emailverification";
+			}
+			else if(result.role == "ROLE_BANNEDUSER")
+			{
+				location.href = "/banned/banned";
+			}
+			else if(result.role == "ROLE_VERIFIEDUSER" || result.role == "ROLE_ADMIN" || result.role == "ROLE_SUPERADMIN")
+			{
+				location.href = "/check/check";
+			}
+			else
+			{
+				deleteCookie("Authorization")
+				
+				location.href = "/error";
+			}
         }
     }
     else
     {
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.code == 200)
-                {
-                    location.href = "/check/check"
-                }
-                else
-                {
-                    deleteCookie("Authorization")
-                    deleteCookie("refreshtoken")
-                }
-            });
+        reissueinit();
     }
     
 };
+
+function reissueinit()
+{
+    let config = {
+        method: "GET",
+        headers: { "Content-Type": "application/json"},
+        credentials: 'include'
+    };
+    fetch("https://workingtime-be.kro.kr/auth/reissue", config)
+        .then((response) => response.json())
+        .then((data) => {
+            if(data.code == 200)
+            {
+                location.href = "/check/check"
+            }
+            else
+            {
+                deleteCookie("Authorization")
+                
+            }
+        });
+}
+
+function activeInput(inputQuery)
+{
+    inputQuery.addEventListener("input",()=> {
+        if(inputQuery.value == "")
+        {
+            inputQuery.classList.remove("active");
+        }
+        else
+        {
+            inputQuery.classList.add("active");
+        }
+    });
+}
+
+var form3Example1c = document.querySelector("#form3Example1c");
+activeInput(form3Example1c);
+
+var form3Example3c = document.querySelector("#form3Example3c");
+activeInput(form3Example3c);
+
+var form3Example4c = document.querySelector("#form3Example4c");
+activeInput(form3Example4c);
+
+var form3Example4cd = document.querySelector("#form3Example4cd");
+activeInput(form3Example4cd);

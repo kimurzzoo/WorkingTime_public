@@ -1,6 +1,6 @@
 var maxPage;
 var checks;
-var nowPage;
+var nowPage = 0;
 var accessToken;
 
 var menuBtn = document.querySelector("#menu-btn")
@@ -28,9 +28,10 @@ menuBtn.addEventListener("click", function(){
 logoutBtn.addEventListener("click", function(){
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/logout", config)
+    fetch("https://workingtime-be.kro.kr/auth/logout", config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200 || data.code == 400)
@@ -54,22 +55,16 @@ window.onload = function(){
     if(accessToken != null)
     {
         accessToken = accessToken.replace('+', ' ');
+        tokencheck();
     }
     else
     {
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.code == 200)
-                {
-                    accessToken = get_cookie("Authorization").replace('+', ' ');
-                }
-                else
-                {
-                    location.href = "/auth/login"
-                }
-            });
+        reissueinit();
     }
+};
+
+function tokencheck()
+{
     var base64Payload = accessToken.replace('Bearer ', '').split('.')[1]; //value 0 -> header, 1 -> payload, 2 -> VERIFY SIGNATURE
     var payload = atob(base64Payload); 
     var result = JSON.parse(payload.toString())
@@ -78,125 +73,120 @@ window.onload = function(){
     console.log(nowDate)
     if(Date.now() > nowDate)
     {
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.code == 200)
-                {
-                    accessToken = get_cookie("Authorization").replace('+', ' ');
-
-                    let config = {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
-                        body: JSON.stringify({
-                            pageNum: nowPage
-                        }),
-                    };
-            
-                    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/mychecks", config)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if(data.code == 200)
-                            {
-                                maxPage = data.maxPage;
-                                checks = data.checks;
-            
-                                for(let check of checks)
-                                {
-                                    checksTable.innerHTML += `<tr>
-                                                                <td>
-                                                                    <p class="fw-normal mb-1">${check.id}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <p class="fw-normal mb-1">${check.startTime}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <p class="fw-normal mb-1">${check.endTime}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <p class="fw-normal mb-1">${check.workingTime}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <p class="fw-normal mb-1">${check.companyName}</p>
-                                                                </td>
-                                                                <td>
-                                                                    <span>
-                                                                        <button onclick="deleteCheck(${check.id})" type="button" class="btn btn-link btn-sm btn-rounded">
-                                                                            Delete
-                                                                        </button>
-                                                                    </span>
-                                                                </td>
-                                                            </tr>`
-                                }
-            
-                                pageHump = Math.floor((nowPage + 1) / 5);
-                                startPage = 1 + pageHump * 5;
-                                endPage = 5 + pageHump * 5;
-            
-                                if(startPage > 1)
-                                {
-                                    document.querySelector(".left-container").innerHTML += `<span onclick="leftClick(${pageHump})" style= "cursor: pointer"><</span>`;
-                                }
-            
-                                if(endPage > maxPage)
-                                {
-                                    endPage = maxPage;
-                                }
-            
-                                if(endPage < maxPage)
-                                {
-                                    document.querySelector(".right-container").innerHTML += `<span onclick="rightClick(${pageHump})" style="cursor: pointer">></span>`;
-                                }
-            
-                                for(let i=startPage; i<= endPage; i++)
-                                {
-                                    if(i == nowPage + 1)
-                                    {
-                                        document.querySelector(".page-container").innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                                    }
-                                    else
-                                    {
-                                        document.querySelector(".page-container").innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                                    }
-                                }
-            
-                            }
-                            else
-                            {
-                                alert(data.description);
-                            }
-                        });
-                }
-                else
-                {
-                    location.href = "/auth/login"
-                }
-            });
+        reissueinit();
     }
     else
     {
+        console.log(result)
+        makeList(result);
+    }
+}
+
+function reissueinit()
+{
+    let config = {
+        method: "GET",
+        headers: { "Content-Type": "application/json"},
+        credentials: 'include'
+    };
+    fetch("https://workingtime-be.kro.kr/auth/reissue", config)
+        .then((response) => response.json())
+        .then((data) => {
+            if(data.code == 200)
+            {
+                accessToken = get_cookie("Authorization").replace('+', ' ');
+                tokencheck();
+            }
+            else
+            {
+                location.href = "/auth/login"
+            }
+        });
+}
+
+function makeBtn()
+{
+        let pageContainer = document.querySelector(".page-container");
+        pageHump = Math.floor((nowPage) / 5);
+        startPage = 1 + pageHump * 5;
+        endPage = 5 + pageHump * 5;
+
+        if(endPage > maxPage)
+        {
+            endPage = maxPage;
+        }
+
+        for(let i=startPage; i<= endPage; i++)
+        {
+            if(i == nowPage + 1)
+            {
+                pageContainer.innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
+            }
+            else
+            {
+                pageContainer.innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
+            }
+        }
+
+        document.querySelector(".left-container").innerHTML = "";
+
+        let leftPage = (pageHump - 1) * 5 + 1;
+
+        if(startPage > 1)
+        {
+            document.querySelector(".left-container").innerHTML += `<span onclick="movePage(${leftPage})" style= "cursor: pointer"><</span>`;
+        }
+
+        document.querySelector(".right-container").innerHTML = "";
+
+        let rightPage = (pageHump + 1) * 5 + 1;
+
+        if(endPage < maxPage)
+        {
+            document.querySelector(".right-container").innerHTML += `<span onclick="movePage(${rightPage})" style="cursor: pointer">></span>`;
+        }
+    
+}
+
+function makeList(result)
+{
+    console.log(result)
+    if(result.role == "ROLE_USER")
+    {
+        location.href = "/auth/emailverification";
+    }
+    else if(result.role == "ROLE_BANNEDUSER")
+    {
+        location.href = "/banned/banned";
+    }
+    else if(result.role == "ROLE_VERIFIEDUSER" || result.role == "ROLE_ADMIN" || result.role == "ROLE_SUPERADMIN")
+    {
         let config = {
             method: "POST",
-            headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+            headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+            credentials: 'include',
             body: JSON.stringify({
                 pageNum: nowPage
             }),
         };
 
-        fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/mychecks", config)
+        fetch("https://workingtime-be.kro.kr/mypage/mychecks", config)
             .then((response) => response.json())
             .then((data) => {
                 if(data.code == 200)
                 {
-                    console.log(data);
                     maxPage = data.maxPage;
                     checks = data.checks;
 
-                    for(let check of checks)
+                    checksTable.innerHTML = "";
+                    for(let i = 0; i < checks.length; i++)
                     {
+                        let check = checks[i];
+                        let j = i+1;
+                                        
                         checksTable.innerHTML += `<tr>
                                                     <td>
-                                                        <p class="fw-normal mb-1">${check.id}</p>
+                                                        <p class="fw-normal mb-1">${j}</p>
                                                     </td>
                                                     <td>
                                                         <p class="fw-normal mb-1">${check.startTime}</p>
@@ -219,38 +209,9 @@ window.onload = function(){
                                                     </td>
                                                 </tr>`
                     }
+                    document.querySelector(".page-container").innerHTML = "";
 
-                    pageHump = Math.floor((nowPage + 1) / 5);
-                    startPage = 1 + pageHump * 5;
-                    endPage = 5 + pageHump * 5;
-
-                    if(startPage > 1)
-                    {
-                        document.querySelector(".left-container").innerHTML += `<span onclick="leftClick(${pageHump})" style= "cursor: pointer"><</span>`;
-                    }
-
-                    if(endPage > maxPage)
-                    {
-                        endPage = maxPage;
-                    }
-
-                    if(endPage < maxPage)
-                    {
-                        document.querySelector(".right-container").innerHTML += `<span onclick="rightClick(${pageHump})" style="cursor: pointer">></span>`;
-                    }
-
-                    for(let i=startPage; i<= endPage; i++)
-                    {
-                        if(i == nowPage + 1)
-                        {
-                            document.querySelector(".page-container").innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                        }
-                        else
-                        {
-                            document.querySelector(".page-container").innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                        }
-                    }
-
+                    makeBtn();
                 }
                 else
                 {
@@ -258,267 +219,29 @@ window.onload = function(){
                 }
             });
     }
-};
+    else
+    {
+        deleteCookie("Authorization")
+		
+        location.href = "/error";
+    }
+}
 
 function movePage(page)
 {
     nowPage = page - 1;
 
-    let config = {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
-        body: JSON.stringify({
-            pageNum: nowPage
-        }),
-    };
-
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/mychecks", config)
-        .then((response) => response.json())
-        .then((data) => {
-            if(data.code == 200)
-            {
-                maxPage = data.maxPage;
-                checks = data.checks;
-
-                checksTable.innerHTML = "";
-                for(let check of checks)
-                {
-                    checksTable.innerHTML += `<tr>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.id}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.startTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.endTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.workingTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.companyName}</p>
-                                                </td>
-                                                <td>
-                                                    <span>
-                                                        <button onclick="deleteCheck(${check.id})" type="button" class="btn btn-link btn-sm btn-rounded">
-                                                            Delete
-                                                        </button>
-                                                    </span>
-                                                </td>
-                                            </tr>`
-                }
-                document.querySelector(".page-container").innerHTML = "";
-
-                pageHump = Math.floor((nowPage) / 5);
-                startPage = 1 + pageHump * 5;
-                endPage = 5 + pageHump * 5;
-
-                for(let i=startPage; i<= endPage; i++)
-                {
-                    if(i == nowPage + 1)
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                    else
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                }
-            }
-            else
-            {
-                alert(data.description);
-            }
-        });
-}
-
-function leftClick(hump)
-{
-    nowPage = (hump - 1) * 5;
-
-    let config = {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
-        body: JSON.stringify({
-            pageNum: nowPage
-        }),
-    };
-
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/mychecks", config)
-        .then((response) => response.json())
-        .then((data) => {
-            if(data.code == 200)
-            {
-                maxPage = data.maxPage;
-                checks = data.checks;
-
-                checksTable.innerHTML = "";
-                for(let check of checks)
-                {
-                    checksTable.innerHTML += `<tr>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.id}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.startTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.endTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.workingTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.companyName}</p>
-                                                </td>
-                                                <td>
-                                                    <span>
-                                                        <button onclick="deleteCheck(${check.id})" type="button" class="btn btn-link btn-sm btn-rounded">
-                                                            Delete
-                                                        </button>
-                                                    </span>
-                                                </td>
-                                            </tr>`
-                }
-                document.querySelector(".page-container").innerHTML = "";
-
-                
-
-                pageHump = Math.floor((nowPage) / 5);
-                startPage = 1 + pageHump * 5;
-                endPage = 5 + pageHump * 5;
-
-                for(let i=startPage; i<= endPage; i++)
-                {
-                    if(i == nowPage + 1)
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                    else
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                }
-
-                document.querySelector(".left-container").innerHTML = "";
-
-                if(startPage > 1)
-                {
-                    document.querySelector(".left-container").innerHTML += `<span onclick="leftClick(${pageHump})" style= "cursor: pointer"><</span>`;
-                }
-
-                document.querySelector(".right-container").innerHTML = "";
-
-                if(endPage < maxPage)
-                {
-                    document.querySelector(".right-container").innerHTML += `<span onclick="rightClick(${pageHump})" style="cursor: pointer">></span>`;
-                }
-            }
-            else
-            {
-                alert(data.description);
-            }
-        });
-}
-
-function rightClick(hump)
-{
-    nowPage = (hump + 1) * 5;
-
-    let config = {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
-        body: JSON.stringify({
-            pageNum: nowPage
-        }),
-    };
-
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/mypage/mychecks", config)
-        .then((response) => response.json())
-        .then((data) => {
-            if(data.code == 200)
-            {
-                maxPage = data.maxPage;
-                checks = data.checks;
-
-                checksTable.innerHTML = "";
-                for(let check of checks)
-                {
-                    checksTable.innerHTML += `<tr>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.id}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.startTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.endTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.workingTime}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="fw-normal mb-1">${check.companyName}</p>
-                                                </td>
-                                                <td>
-                                                    <span>
-                                                        <button onclick="deleteCheck(${check.id})" type="button" class="btn btn-link btn-sm btn-rounded">
-                                                            Delete
-                                                        </button>
-                                                    </span>
-                                                </td>
-                                            </tr>`
-                }
-
-                document.querySelector(".page-container").innerHTML = "";
-
-                
-
-                pageHump = Math.floor((nowPage) / 5);
-                startPage = 1 + pageHump * 5;
-                endPage = 5 + pageHump * 5;
-
-                for(let i=startPage; i<= endPage; i++)
-                {
-                    if(i == nowPage + 1)
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2 text-primary fw-bold" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                    else
-                    {
-                        document.querySelector(".page-container").innerHTML += `<span class="m-2" onclick="movePage(${i})" style="cursor: pointer">${i}</span>`;
-                    }
-                }
-
-                document.querySelector(".left-container").innerHTML = "";
-
-                if(startPage > 1)
-                {
-                    document.querySelector(".left-container").innerHTML += `<span onclick="leftClick(${pageHump})" style= "cursor: pointer"><</span>`;
-                }
-
-                document.querySelector(".right-container").innerHTML = "";
-
-                if(endPage < maxPage)
-                {
-                    document.querySelector(".right-container").innerHTML += `<span onclick="rightClick(${pageHump})" style="cursor: pointer">></span>`;
-                }
-            }
-            else
-            {
-                alert(data.description);
-            }
-        });
+    tokencheck();
 }
 
 function deleteCheck(id)
 {
     let config = {
         method: "GET",
-        headers: { "Content-Type": "application/json", "credentials": "include", "Authorization" : accessToken},
+        headers: { "Content-Type": "application/json", "Authorization" : accessToken},
+        credentials: 'include'
       };
-    fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/check/deletecheck?checkid=" + id, config)
+    fetch("https://workingtime-be.kro.kr/check/deletecheck?checkid=" + id, config)
         .then((response) => response.json())
         .then((data) => {
             if(data.code == 200)

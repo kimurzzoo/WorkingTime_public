@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check</title>
+    <title>Chat</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
     <link href="/css/header.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -20,15 +20,15 @@
                 <div class="list-group list-group-flush mx-3 mt-4">
                     <a href="/check/check" class="list-group-item list-group-item-action py-2 ripple"><i
                         class="fas fa-lock fa-fw me-3"></i><span>Check</span></a>
-                    <a href="/mypage/mypage" class="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/mypage" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>MyPage</span>
                     </a>
                     <a href="/check/mycheck" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-area fa-fw me-3"></i><span>My Checks</span>
                     </a>
-                    <a href="/rank/rank" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/rank" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-lock fa-fw me-3"></i><span>Rank</span></a>
-                    <a href="/chat/chat" class="list-group-item list-group-item-action py-2 ripple"><i
+                    <a href="/chat" class="list-group-item list-group-item-action py-2 ripple"><i
                             class="fas fa-chart-line fa-fw me-3"></i><span>Chat</span></a>
                     <a id="logout-btn" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="fas fa-chart-pie fa-fw me-3"></i><span>Logout</span>
@@ -48,7 +48,7 @@
                 </button>
     
                 <!-- Brand -->
-                <a class="navbar-brand" href="#">Working Time
+                <a class="navbar-brand" href="https://workingtime.kro.kr">Working Time
                 </a>
             </div>
             <!-- Container wrapper -->
@@ -65,7 +65,7 @@
                     <div>
                         <p class="company-name"></p>
                     </div>
-                    <div class="chat-box" style="width: 300px; height: 500px;">
+                    <div class="chat-box" style="width: 300px; height: 500px; overflow: scroll; ">
     
                     </div>
                     <div>
@@ -77,6 +77,6 @@
         </div>
     </main>
     
-    <script src="/js/check/check.js"></script>
+    <script src="/js/chat/chat.js"></script>
 </body>
 </html>

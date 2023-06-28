@@ -51,4 +51,10 @@ class MyPageRestController(private val myPageService: MyPageService) {
         }
         return myPageService.myChecks(email, myChecksDTO.startDate, myChecksDTO.endDate, myChecksDTO.companyName, myChecksDTO.minWorkingHour, myChecksDTO.maxWorkingHour, myChecksDTO.pageNum)
     }
+
+    @GetMapping("/hb")
+    fun heartbeat()
+    {
+
+    }
 }

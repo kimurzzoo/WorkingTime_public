@@ -36,18 +36,18 @@ class RankService(private val encoder : AES256Encoder,
                 return AvgUserWorkingTimeDTO(null, 1001, "you are banned")
             }
 
-            var startDateTime = LocalDateTime.of(1970, 1, 1, 0, 0, 0)
-
-            if(startDate != null)
-            {
-                startDateTime = DateUtil.stringToDate(startDate)
-            }
-
             var endDateTime = LocalDateTime.now()
 
             if(endDate != null)
             {
                 endDateTime = DateUtil.stringToDate(endDate)
+            }
+
+            var startDateTime = endDateTime.minusWeeks(1)
+
+            if(startDate != null)
+            {
+                startDateTime = DateUtil.stringToDate(startDate)
             }
 
             val result : AvgUserWorkingTimeDAO

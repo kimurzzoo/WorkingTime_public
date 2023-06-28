@@ -73,4 +73,10 @@ class CheckRestController(private val checkService: CheckService) {
         }
         return checkService.nowCheck(email)
     }
+
+    @GetMapping("/hb")
+    fun heartbeat()
+    {
+
+    }
 }

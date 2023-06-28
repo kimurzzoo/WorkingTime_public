@@ -41,7 +41,13 @@ class MyPageService(private val userRepository: UserRepository,
             }
             else
             {
-                return InfoResponseDTO(encoder.decrypt(user.nickname), user.company!!.name, 200, "info success")
+                val company = user.company
+                var companyName : String = ""
+                if(company != null)
+                {
+                    companyName = company.name
+                }
+                return InfoResponseDTO(encoder.decrypt(user.nickname), companyName, 200, "info success")
             }
         }
         catch (e : Exception)
@@ -51,7 +57,7 @@ class MyPageService(private val userRepository: UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun changeNickname(email : String, newNickname : String) : ResponseDTO
     {
         try {
@@ -83,7 +89,7 @@ class MyPageService(private val userRepository: UserRepository,
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     fun changeCompany(email : String, companyName : String) : ResponseDTO
     {
         try {
@@ -106,6 +112,16 @@ class MyPageService(private val userRepository: UserRepository,
             {
                 return ResponseDTO(1002, "this company is shut down")
             }
+
+            if(user.checks.isNotEmpty())
+            {
+                val nowCheck = user.checks[0]
+                if(nowCheck.endTime == null)
+                {
+                    checkRepository.deleteById(nowCheck.id!!)
+                }
+            }
+
             user.company = company
             userRepository.save(user)
             return ResponseDTO(200, "change company success")

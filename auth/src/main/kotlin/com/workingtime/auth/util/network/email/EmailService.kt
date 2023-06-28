@@ -32,7 +32,7 @@ class EmailService(private val javaMailSender: JavaMailSender,
         val ePw : String = createKey()
         val message = javaMailSender.createMimeMessage()
         message.addRecipients(MimeMessage.RecipientType.TO, to) // to 보내는 대상
-        message.subject = "Working Time 회원가입 인증 코드: " //메일 제목
+        message.subject = "Working Time 회원가입 인증 코드" //메일 제목
 
         // 메일 내용 메일의 subtype을 html로 지정하여 html문법 사용 가능
         var msg: String? = ""
@@ -51,11 +51,11 @@ class EmailService(private val javaMailSender: JavaMailSender,
         val ePw : String = createPassword()
         val message = javaMailSender.createMimeMessage()
         message.addRecipients(MimeMessage.RecipientType.TO, to) // to 보내는 대상
-        message.subject = "Working Time 새로운 비밀번호: " //메일 제목
+        message.subject = "Working Time 새로운 비밀번호" //메일 제목
 
         // 메일 내용 메일의 subtype을 html로 지정하여 html문법 사용 가능
         var msg: String? = ""
-        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>"
+        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">새 비밀번호</h1>"
         msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">새로운 비밀번호입니다. 꼭 비밀번호를 변경해주세요.</p>"
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">"
         msg += ePw
@@ -74,10 +74,8 @@ class EmailService(private val javaMailSender: JavaMailSender,
         return key.toString()
     }
 
-    fun createPassword() : String
-    {
-        var result : String = RandomStringUtils.randomAlphanumeric(24)
-        return result
+    fun createPassword(): String {
+        return RandomStringUtils.randomAlphanumeric(24)
     }
 
     @Throws(Exception::class)
@@ -121,7 +119,6 @@ class EmailService(private val javaMailSender: JavaMailSender,
                 {
                     result.code = 200
                     result.description = "email verification success"
-                    redisUtil.deleteData(key)
                 }
                 else
                 {

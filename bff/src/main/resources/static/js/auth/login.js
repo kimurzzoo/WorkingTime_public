@@ -1,3 +1,5 @@
+var accessToken;
+
 var emailForm = document.querySelector("#form2Example1");
 var passwordForm = document.querySelector("#form2Example2");
 var loginBtn = document.querySelector("#btn-login");
@@ -5,7 +7,8 @@ var loginBtn = document.querySelector("#btn-login");
 loginBtn.addEventListener("click", function () {
 	let config = {
 		method: "POST",
-		headers: { "Content-Type": "application/json", "credentials": "include" },
+		headers: { "Content-Type": "application/json"},
+		credentials : 'include',
 		body: JSON.stringify({
 			email: emailForm.value,
 			password: passwordForm.value
@@ -13,11 +16,11 @@ loginBtn.addEventListener("click", function () {
 	};
 	console.log(emailForm.value)
 	console.log(passwordForm.value)
-	fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/login", config)
+	fetch("https://workingtime-be.kro.kr/auth/login", config)
 		.then((response) => response.json())
 		.then((data) => {
 			if (data.code == 200) {
-				//location.href = "/check/check"
+				location.href = "/check/check"
 				console.log("access token : " + get_cookie("Authorization"));
 			}
 		});
@@ -41,41 +44,79 @@ window.onload = function () {
 		var result = JSON.parse(payload.toString())
 		console.log(payload)
 		console.log(result.exp)
+		console.log(result.role)
 		console.log(Date.now())
 		var nowDate = new Date(result.exp * 1000)
 		console.log(nowDate)
 		console.log(new Date(Date.now()))
 		if (new Date(Date.now()) > nowDate) {
 			console.log("expired")
-			fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.code == 200) {
-						location.href = "/check/check"
-					}
-					else {
-						deleteCookie("Authorization")
-						deleteCookie("refreshtoken")
-					}
-				});
+			reissueinit();
 		}
 		else {
 			console.log("not expired")
-			location.href = "/check/check"
+			if(result.role == "ROLE_USER")
+			{
+				location.href = "/auth/emailverification";
+			}
+			else if(result.role == "ROLE_BANNEDUSER")
+			{
+				location.href = "/banned/banned";
+			}
+			else if(result.role == "ROLE_VERIFIEDUSER" || result.role == "ROLE_ADMIN" || result.role == "ROLE_SUPERADMIN")
+			{
+				location.href = "/check/check";
+			}
+			else
+			{
+				deleteCookie("Authorization")
+				
+				location.href = "/error";
+			}
 		}
 	}
 	else {
-		fetch("https://workingtime-api-gateway-uoeqax7pxa-du.a.run.app/auth/reissue")
-			.then((response) => response.json())
-			.then((data) => {
-				if (data.code == 200) {
-					location.href = "/check/check"
-				}
-				else {
-					deleteCookie("Authorization")
-					deleteCookie("refreshtoken")
-				}
-			});
+		reissueinit();
 	}
 
 };
+
+function reissueinit()
+{
+	let config = {
+		method: "GET",
+		headers: { "Content-Type": "application/json"},
+		credentials: 'include'
+	};
+	fetch("https://workingtime-be.kro.kr/auth/reissue", config)
+		.then((response) => response.json())
+		.then((data) => {
+			if (data.code == 200) {
+				location.href = "/check/check"
+			}
+			else {
+				deleteCookie("Authorization")
+				
+			}
+		});
+}
+
+function activeInput(inputQuery)
+{
+    inputQuery.addEventListener("input",()=> {
+        if(inputQuery.value == "")
+        {
+            inputQuery.classList.remove("active");
+        }
+        else
+        {
+            inputQuery.classList.add("active");
+        }
+    });
+}
+
+var form2Example1 = document.querySelector("#form2Example1");
+activeInput(form2Example1);
+
+var form2Example2 = document.querySelector("#form2Example2");
+activeInput(form2Example2);

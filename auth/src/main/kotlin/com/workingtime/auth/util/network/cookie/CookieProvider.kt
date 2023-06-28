@@ -4,12 +4,16 @@ import com.workingtime.auth.account.jwt.JwtTokenProvider.Companion.refreshTokenV
 import com.workingtime.auth.account.jwt.JwtTokenProvider.Companion.tokenValidTime
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
 
 @Component
 class CookieProvider {
+
+    @Value("\${cookie.domain}")
+    private lateinit var cookieDomain : String
 
     fun createAccessTokenCookie(accessToken : String) : ResponseCookie
     {
@@ -19,6 +23,7 @@ class CookieProvider {
             //.secure(false)
             .path("/")
             .sameSite("None")
+            .domain(cookieDomain)
             .maxAge(tokenValidTime / 1000).build()
     }
 
@@ -30,6 +35,7 @@ class CookieProvider {
             //.secure(false)
             .path("/")
             .sameSite("None")
+            .domain(cookieDomain)
             .maxAge(refreshTokenValidTime / 1000).build()
     }
 
@@ -39,7 +45,9 @@ class CookieProvider {
         cookie.path = path
         cookie.secure = secure
         cookie.isHttpOnly = httpOnly
+        cookie.setAttribute("SameSite", "None")
         cookie.maxAge = 0
+        cookie.domain = cookieDomain
         return cookie
     }
 
@@ -51,6 +59,7 @@ class CookieProvider {
         cookie.isHttpOnly = responseCookie.isHttpOnly
         cookie.maxAge = responseCookie.maxAge.seconds.toInt()
         cookie.setAttribute("SameSite", responseCookie.sameSite)
+        cookie.domain = responseCookie.domain
         return cookie
     }
 

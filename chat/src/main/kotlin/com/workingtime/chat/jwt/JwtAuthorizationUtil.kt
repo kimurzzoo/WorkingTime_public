@@ -24,12 +24,12 @@ class JwtAuthorizationUtil {
 
     fun getClaims(token: String) : Claims
     {
-        return Jwts.parserBuilder().setSigningKey(realkey).build().parseClaimsJws(token).body
+        return Jwts.parserBuilder().setSigningKey(realkey).build().parseClaimsJws(bearerToken(token)).body
     }
 
     fun getUsername(token : String) : String
     {
-        return Jwts.parserBuilder().setSigningKey(realkey).build().parseClaimsJws(token).body.subject
+        return Jwts.parserBuilder().setSigningKey(realkey).build().parseClaimsJws(bearerToken(token)).body.subject
     }
 
     fun validateToken(jwtToken: String?): Boolean {
