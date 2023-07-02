@@ -44,6 +44,9 @@ public repository of WorkingTime
 ![check_start](https://github.com/kimurzzoo/WorkingTime_public/assets/29720824/8083b53a-c81c-42b9-81a8-c68f37dc3e3a)
 ![check_do](https://github.com/kimurzzoo/WorkingTime_public/assets/29720824/6a2584b6-aeab-4398-81a5-424168909044)
 
+- 내 근로 시간 기록 페이지
+![mychecks](https://github.com/kimurzzoo/WorkingTime_public/assets/29720824/18a3d302-92f9-48bb-a658-21e2d300120f)
+
 - 마이페이지
 ![mypage](https://github.com/kimurzzoo/WorkingTime_public/assets/29720824/3b351832-ff68-4857-ab23-74d073fa6e86)
 
