@@ -145,7 +145,7 @@ function stompstart()
             var datum = JSON.parse(response.body);
             console.log(datum)
 
-            var str = "<div class='col-6'>";
+            var str = "<div style='clear:both'>";
 
             if(datum.userId == userId)
             {
@@ -196,8 +196,6 @@ function chatinit(result)
                     userId = data.chatroom.userId;
 
                     stompstart();
-
-                    setInterval(tokencheck, 5 * 60 * 1000);
                 }
                 else
                 {
